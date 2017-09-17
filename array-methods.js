@@ -122,8 +122,17 @@ var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(
     round this number to the nearest 10th of a cent before moving on.
   )
  */
+function collectStateSums(previous, current) {
+  if (!previous.hasOwnProperty(current.state)) {
+    previous[current.state] = null;
+  }
 
-var stateSums = null;
+  previous[current.state] += parseFloat(current.amount);
+  return previous;
+}
+
+
+var stateSums = bankBalances.reduce(collectStateSums);
 
 /*
   from each of the following states:
