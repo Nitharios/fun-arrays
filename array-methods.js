@@ -123,11 +123,15 @@ var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(
   )
  */
 function collectStateSums(previous, current) {
-  previous[current.state] += parseFloat(current.amount);
-  previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
+  // previous[current.state] = 0;
+  if (current.state in previous) {
+    previous[current.state] += parseFloat(current.amount);
+    previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
+  } else {
+    previous[current.state] = parseFloat(current.amount);
+  }
   return previous;
 }
-
 
 var stateSums = bankBalances.reduce(collectStateSums, {});
 console.log(stateSums);
@@ -147,7 +151,23 @@ console.log(stateSums);
     round this number to the nearest 10th of a cent before moving on.
   )
  */
-var sumOfHighInterests = null;
+function bumpDatHighInterest(previous, current, index, array) {
+  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+  var amount = 0;
+  var highAmount = 0;
+
+  if (searchArray.includes(current.state)) {
+    amount = parseFloat(((current.amount) * 1.189).toFixed(2));
+
+    if (amount > 50000) {
+      highAmount = amount;
+    }
+  } 
+
+  return previous + highAmount;
+}
+
+var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
 
 /*
   set `lowerSumStates` to be an array of two letter state
