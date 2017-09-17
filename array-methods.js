@@ -154,28 +154,60 @@ function collectStateSums(previous, current) {
   )
  */
 
-  var sumOfHighInterests = bankBalances.reduce(bumpDatHighInterest, {});
+var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
+console.log(sumOfHighInterests);
+// var sumChecker = bankBalances.reduce(stateSumChecker, 0);
+// console.log(sumChecker);
 
-  //var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
-
-  function bumpDatHighInterest(previous, current, index, array) {
+function bumpDatHighInterest(previous, current, index, array) {
   var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+  var amount = 0;
 
   if (searchArray.includes(current.state)) {
-    previous[current.state] += parseFloat(((current.amount) * 0.189).toFixed(2));
-    previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
-  }
-  // if (searchArray.includes(current.state)) {
-  //   amount = parseFloat(((current.amount) * 0.189).toFixed(2));
+    amount = parseFloat(((current.amount) * 0.189).toFixed(2));
+  } 
 
-  //   if (amount > 50000) {
-  //     highAmount = amount;
-  //   }
-  // } 
-
-  // return previous + highAmount;
+  if (amount > 50000) {
+    amount += parseFloat(current.amount);
+    return previous+amount;
   }
   
+  return previous;
+
+// function stateSumChecker(previous, current, index, array) {
+//   var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+//   var amount = 0;
+
+//   if (searchArray.includes(current.state)) {
+//     amount = parseFloat((current.amount));
+//   }
+
+//   return previous + amount;
+// }
+  // function needs to reduce dataset to an object that has the summed bank balances of every state
+  // if (searchArray.includes(current.state) && !previous.hasOwnProperty(current.state)) {
+  //   amount = parseFloat(((current.amount) * 0.189).toFixed(2));
+  //   amount = Math.round(parseFloat(previous[current.state] * 100)/ 100);
+  
+  // } else if (searchArray.includes(current.state)) {
+  //   amount += parseFloat(((current.amount) * 0.189).toFixed(2));
+  // }
+
+  // return previous + amount;
+
+  // function sumDatHighInterest(object) {
+  //   // Takes object values and pushes them into an array;
+  //   var interestSums = Object.values(object);
+  //   var sum = 0;
+
+  //   for (var x in interestSums) {
+  //     if (interestSums[x] > 50000) {
+  //       sum += interestSums[x];
+  //     }
+  //   }
+  //   return sum;
+  // }
+  }
 /*
   set `lowerSumStates` to be an array of two letter state
   abbreviations of each state where the sum of amounts
