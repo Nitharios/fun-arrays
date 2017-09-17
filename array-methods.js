@@ -122,6 +122,7 @@ var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(
     round this number to the nearest 10th of a cent before moving on.
   )
  */
+
 var stateSums = null;
 
 /*
