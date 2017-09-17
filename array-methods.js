@@ -6,13 +6,13 @@ var bankBalances = dataset.bankBalances;
   greater than 100000
   assign the resulting new array to `hundredThousandairs`
 */
+var hundredThousandairs = bankBalances.filter(getAmount);
+
 function getAmount(element) {
   if (element.amount > 100000) {
     return element;
   }
 }
-
-var hundredThousandairs = bankBalances.filter(getAmount);
 
 /*
   DO NOT MUTATE DATA.
@@ -31,6 +31,8 @@ var hundredThousandairs = bankBalances.filter(getAmount);
     }
   assign the resulting new array to `datasetWithRoundedDollar`
 */
+var datasetWithRoundedDollar = bankBalances.map(roundedDollar);
+
 function roundedDollar(element, index, array) {
   var dollarObj = {};
   dollarObj.amount = element.amount;
@@ -39,8 +41,6 @@ function roundedDollar(element, index, array) {
 
   return dollarObj;
 }
-
-var datasetWithRoundedDollar = bankBalances.map(roundedDollar);
 
 /*
   DO NOT MUTATE DATA.
@@ -65,6 +65,9 @@ var datasetWithRoundedDollar = bankBalances.map(roundedDollar);
     }
   assign the resulting new array to `roundedDime`
 */
+
+var datasetWithRoundedDime = bankBalances.map(roundedDime);
+
 function roundedDime(element) {
   var dimeObj = {};
   dimeObj.amount = element.amount;
@@ -73,15 +76,12 @@ function roundedDime(element) {
   return dimeObj;
 }
 
-var datasetWithRoundedDime = bankBalances.map(roundedDime);
-
 // set sumOfBankBalances to be the sum of all value held at `amount` for each bank object
+var sumOfBankBalances = parseFloat(bankBalances.reduce(sumOfBalances, 0).toFixed(2));
+
 function sumOfBalances(previous, current, index, array) {
   return previous + parseFloat(current.amount);
 }
-
-var sumOfBankBalances = parseFloat(bankBalances.reduce(sumOfBalances, 0).toFixed(2));
-
 /*
   from each of the following states:
     Wisconsin
@@ -93,6 +93,9 @@ var sumOfBankBalances = parseFloat(bankBalances.reduce(sumOfBalances, 0).toFixed
   take each `amount` and add 18.9% interest to it rounded to the nearest cent
   and then sum it all up into one value saved to `sumOfInterests`
  */
+
+var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(2));
+
 function bumpDatInterest(previous, current, index, array) {
   var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
   var amount = 0;
@@ -103,8 +106,6 @@ function bumpDatInterest(previous, current, index, array) {
 
   return previous + amount;
 }
-
-var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(2));
 
 /*
   aggregate the sum of bankBalance amounts
@@ -122,6 +123,9 @@ var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(
     round this number to the nearest 10th of a cent before moving on.
   )
  */
+
+var stateSums = bankBalances.reduce(collectStateSums, {});
+
 function collectStateSums(previous, current) {
   // previous[current.state] = 0;
   if (current.state in previous) {
@@ -133,8 +137,6 @@ function collectStateSums(previous, current) {
   return previous;
 }
 
-var stateSums = bankBalances.reduce(collectStateSums, {});
-console.log(stateSums);
 /*
   from each of the following states:
     Wisconsin
@@ -147,28 +149,33 @@ console.log(stateSums);
   only sum values greater than 50,000 and save it to `sumOfInterests`
 
   note: During your summation (
-    if at any point durig your calculation where the number looks like `2486552.9779399997`
+    if at any point during your calculation where the number looks like `2486552.9779399997`
     round this number to the nearest 10th of a cent before moving on.
   )
  */
-function bumpDatHighInterest(previous, current, index, array) {
+
+  var sumOfHighInterests = bankBalances.reduce(bumpDatHighInterest, {});
+
+  //var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
+
+  function bumpDatHighInterest(previous, current, index, array) {
   var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
-  var amount = 0;
-  var highAmount = 0;
 
   if (searchArray.includes(current.state)) {
-    amount = parseFloat(((current.amount) * 1.189).toFixed(2));
+    previous[current.state] += parseFloat(((current.amount) * 0.189).toFixed(2));
+    previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
+  }
+  // if (searchArray.includes(current.state)) {
+  //   amount = parseFloat(((current.amount) * 0.189).toFixed(2));
 
-    if (amount > 50000) {
-      highAmount = amount;
-    }
-  } 
+  //   if (amount > 50000) {
+  //     highAmount = amount;
+  //   }
+  // } 
 
-  return previous + highAmount;
-}
-
-var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
-
+  // return previous + highAmount;
+  }
+  
 /*
   set `lowerSumStates` to be an array of two letter state
   abbreviations of each state where the sum of amounts
