@@ -1,17 +1,18 @@
 var dataset = require('./dataset.json');
+var bankBalances = dataset.bankBalances;
 
 /*
   create an array with accounts from bankBalances that are
   greater than 100000
   assign the resulting new array to `hundredThousandairs`
 */
-function getAmount(element, index, array) {
+function getAmount(element) {
   if (element.amount > 100000) {
     return element;
   }
 }
 
-var hundredThousandairs = dataset.bankBalances.filter(getAmount);
+var hundredThousandairs = bankBalances.filter(getAmount);
 
 /*
   DO NOT MUTATE DATA.
@@ -30,7 +31,12 @@ var hundredThousandairs = dataset.bankBalances.filter(getAmount);
     }
   assign the resulting new array to `datasetWithRoundedDollar`
 */
-var datasetWithRoundedDollar = null;
+function roundedDollar(element) {
+  element.rounded = Math.round(element);
+  return element;
+}
+
+var datasetWithRoundedDollar = bankBalances.filter(roundedDollar);
 
 /*
   DO NOT MUTATE DATA.
@@ -55,6 +61,10 @@ var datasetWithRoundedDollar = null;
     }
   assign the resulting new array to `roundedDime`
 */
+function roundedDime(element, index, array) {
+
+};
+
 var datasetWithRoundedDime = null;
 
 // set sumOfBankBalances to be the sum of all value held at `amount` for each bank object
