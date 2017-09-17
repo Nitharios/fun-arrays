@@ -31,12 +31,16 @@ var hundredThousandairs = bankBalances.filter(getAmount);
     }
   assign the resulting new array to `datasetWithRoundedDollar`
 */
-function roundedDollar(element) {
-  element.rounded = Math.round(element);
-  return element;
+function roundedDollar(element, index, array) {
+  var dollarObj = {};
+  dollarObj.amount = element.amount;
+  dollarObj.state = element.state;
+  dollarObj.rounded = Math.round(element.amount);
+
+  return dollarObj;
 }
 
-var datasetWithRoundedDollar = bankBalances.filter(roundedDollar);
+var datasetWithRoundedDollar = bankBalances.map(roundedDollar);
 
 /*
   DO NOT MUTATE DATA.
@@ -61,14 +65,22 @@ var datasetWithRoundedDollar = bankBalances.filter(roundedDollar);
     }
   assign the resulting new array to `roundedDime`
 */
-function roundedDime(element, index, array) {
+function roundedDime(element) {
+  var dimeObj = {};
+  dimeObj.amount = element.amount;
+  dimeObj.state = element.state;
+  dimeObj.roundedDime = Math.round(element.amount*10)/10;
+  return dimeObj;
+}
 
-};
-
-var datasetWithRoundedDime = null;
+var datasetWithRoundedDime = bankBalances.map(roundedDime);
 
 // set sumOfBankBalances to be the sum of all value held at `amount` for each bank object
-var sumOfBankBalances = null;
+function sumOfBalances(previous, current, index, array) {
+  return previous + parseFloat(current.amount);
+}
+
+var sumOfBankBalances = parseFloat(bankBalances.reduce(sumOfBalances, 0).toFixed(2));
 
 /*
   from each of the following states:
@@ -81,7 +93,18 @@ var sumOfBankBalances = null;
   take each `amount` and add 18.9% interest to it rounded to the nearest cent
   and then sum it all up into one value saved to `sumOfInterests`
  */
-var sumOfInterests = null;
+function bumpDatInterest(previous, current, index, array) {
+  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+  var amount = 0;
+
+  if (searchArray.includes(current.state)) {
+    amount = parseFloat(((current.amount) * 0.189).toFixed(2));
+  } 
+
+  return previous + amount;
+}
+
+var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(2));
 
 /*
   aggregate the sum of bankBalance amounts
