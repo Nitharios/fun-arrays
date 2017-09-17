@@ -123,18 +123,13 @@ var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(
   )
  */
 function collectStateSums(previous, current) {
-  // console.log(previous);
-  // if (!previous.hasOwnProperty(current.state)) {
-  //   conole.log('hello')
-  //   previous[current.state] = 0;
-  // }
   previous[current.state] += parseFloat(current.amount);
   previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
   return previous;
 }
 
 
-var stateSums = bankBalances.reduce(collectStateSums);
+var stateSums = bankBalances.reduce(collectStateSums, {});
 console.log(stateSums);
 /*
   from each of the following states:
