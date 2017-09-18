@@ -9,11 +9,8 @@ var bankBalances = dataset.bankBalances;
 var hundredThousandairs = bankBalances.filter(getAmount);
 
 function getAmount(element) {
-  if (element.amount > 100000) {
-    return element;
-  }
+  if (element.amount > 100000) return element;
 }
-
 /*
   DO NOT MUTATE DATA.
 
@@ -155,7 +152,7 @@ function collectStateSums(previous, current) {
  */
 
 var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
-console.log(sumOfHighInterests);
+// console.log(sumOfHighInterests);
 // var sumChecker = bankBalances.reduce(stateSumChecker, 0);
 // console.log(sumChecker);
 
@@ -213,7 +210,33 @@ function bumpDatHighInterest(previous, current, index, array) {
   abbreviations of each state where the sum of amounts
   in the state is less than 1,000,000
  */
-var lowerSumStates = null;
+var lowerSums = bankBalances.reduce(lowSums, {});
+var lowerSumStates = agreggate(lowerSums);
+
+function lowSums(previous, current) {
+  var amount = 0;
+
+  if (current.state in previous) {
+    previous[current.state] += parseFloat(current.amount);
+    previous[current.state] = Math.round(previous[current.state]*100)/100;
+  } else {
+    previous[current.state] = parseFloat(current.amount);
+  }
+
+  return previous;
+}
+
+function agreggate(object) {
+  var keys = Object.keys(object);
+  var values = Object.values(object);
+  var lowSumArray = [];
+
+  for (var i in keys) {
+    if (values[i] < 1000000) lowSumArray.push(keys[i]);
+  }
+
+  return lowSumArray;
+}
 
 /*
   aggregate the sum of each state into one hash table
