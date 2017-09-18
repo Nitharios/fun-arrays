@@ -211,7 +211,7 @@ function bumpDatHighInterest(previous, current, index, array) {
   in the state is less than 1,000,000
  */
 var lowerSums = bankBalances.reduce(lowSums, {});
-var lowerSumStates = agreggate(lowerSums);
+var lowerSumStates = agreggateLow(lowerSums);
 
 function lowSums(previous, current) {
   var amount = 0;
@@ -226,7 +226,7 @@ function lowSums(previous, current) {
   return previous;
 }
 
-function agreggate(object) {
+function agreggateLow(object) {
   var keys = Object.keys(object);
   var values = Object.values(object);
   var lowSumArray = [];
@@ -238,11 +238,44 @@ function agreggate(object) {
   return lowSumArray;
 }
 
+// function filterAgreggate(element, index) {
+//   if (Object.values(object)[index] < 1000000) {
+//     return  element;
+//   }
+// }
+
 /*
   aggregate the sum of each state into one hash table
   `higherStateSums` should be the sum of all states with totals greater than 1,000,000
  */
-var higherStateSums = null;
+var higherSums = bankBalances.reduce(highSums, {});
+var higherStateSums = aggregateHigh(higherSums);
+
+function highSums(previous, current) {
+  var amount = 0;
+
+  if (current.state in previous) {
+    previous[current.state] += parseFloat(current.amount);
+    previous[current.state] = Math.round(previous[current.state]*100)/100;
+  } else {
+    previous[current.state] = parseFloat(current.amount);
+  }
+
+  return previous;
+}
+
+function aggregateHigh(object) {
+  var values = Object.values(object);
+  sum = 0;
+
+  for (var i in values) {
+    if (values[i] > 1000000) {
+      sum += values[i];
+    }
+  }
+
+  return sum;
+}
 
 /*
   from each of the following states:
