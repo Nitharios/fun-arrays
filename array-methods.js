@@ -210,10 +210,10 @@ function bumpDatHighInterest(previous, current, index, array) {
   abbreviations of each state where the sum of amounts
   in the state is less than 1,000,000
  */
-var lowerSums = bankBalances.reduce(lowSums, {});
-var lowerSumStates = agreggateLow(lowerSums);
+var allStateSums = bankBalances.reduce(allSums, {});
+var lowerSumStates = agreggateLow(allStateSums);
 
-function lowSums(previous, current) {
+function allSums(previous, current) {
   var amount = 0;
 
   if (current.state in previous) {
@@ -248,21 +248,7 @@ function agreggateLow(object) {
   aggregate the sum of each state into one hash table
   `higherStateSums` should be the sum of all states with totals greater than 1,000,000
  */
-var higherSums = bankBalances.reduce(highSums, {});
-var higherStateSums = aggregateHigh(higherSums);
-
-function highSums(previous, current) {
-  var amount = 0;
-
-  if (current.state in previous) {
-    previous[current.state] += parseFloat(current.amount);
-    previous[current.state] = Math.round(previous[current.state]*100)/100;
-  } else {
-    previous[current.state] = parseFloat(current.amount);
-  }
-
-  return previous;
-}
+var higherStateSums = aggregateHigh(allStateSums);
 
 function aggregateHigh(object) {
   var values = Object.values(object);
@@ -292,8 +278,24 @@ function aggregateHigh(object) {
   if true set `areStatesInHigherStateSum` to `true`
   otherwise set it to `false`
  */
-var areStatesInHigherStateSum = null;
+var areStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).every(higherSumChecker);
 
+function selectedSums(previous, current, index, array) {
+  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+
+ if (searchArray.includes(current.state) && !previous.hasOwnProperty(current.state)) {
+    previous[current.state] = parseFloat(current.amount);
+    previous[current.state] = Math.round(previous[current.state]*100)/100;
+  } else if (searchArray.includes(current.state)) {
+    previous[current.state] = parseFloat(current.amount);
+  }
+
+  return previous;
+}
+
+function higherSumChecker(element) {
+  return (element > 2550000);
+}
 /*
   Stretch Goal && Final Boss
 
