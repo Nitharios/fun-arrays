@@ -283,8 +283,8 @@ var areStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, 
 function selectedSums(previous, current, index, array) {
   var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
 
- if (searchArray.includes(current.state) && !previous.hasOwnProperty(current.state)) {
-    previous[current.state] = parseFloat(current.amount);
+ if (previous.hasOwnProperty(current.state)) {
+    previous[current.state] += parseFloat(current.amount);
     previous[current.state] = Math.round(previous[current.state]*100)/100;
   } else if (searchArray.includes(current.state)) {
     previous[current.state] = parseFloat(current.amount);
@@ -310,8 +310,25 @@ function higherSumChecker(element) {
   have a sum of account values greater than 2,550,000
   otherwise set it to be `false`
  */
-var anyStatesInHigherStateSum = null;
 
+var anyStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).some(higherSumChecker);
+
+function selectedSums(previous, current, index, array) {
+  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+
+ if (previous.hasOwnProperty(current.state)) {
+    previous[current.state] += parseFloat(current.amount);
+    previous[current.state] = Math.round(previous[current.state]*100)/100;
+  } else if (searchArray.includes(current.state)) {
+    previous[current.state] = parseFloat(current.amount);
+  }
+
+  return previous;
+}
+
+function higherSumChecker(element) {
+  return (element > 2550000);
+}
 
 module.exports = {
   hundredThousandairs : hundredThousandairs,
