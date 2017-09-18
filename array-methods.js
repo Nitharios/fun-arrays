@@ -1,5 +1,6 @@
 var dataset = require('./dataset.json');
 var bankBalances = dataset.bankBalances;
+var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
 
 /*
   create an array with accounts from bankBalances that are
@@ -94,7 +95,6 @@ function sumOfBalances(previous, current, index, array) {
 var sumOfInterests = parseFloat(bankBalances.reduce(bumpDatInterest, 0).toFixed(2));
 
 function bumpDatInterest(previous, current, index, array) {
-  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
   var amount = 0;
 
   if (searchArray.includes(current.state)) {
@@ -124,7 +124,6 @@ function bumpDatInterest(previous, current, index, array) {
 var stateSums = bankBalances.reduce(collectStateSums, {});
 
 function collectStateSums(previous, current) {
-  // previous[current.state] = 0;
   if (current.state in previous) {
     previous[current.state] += parseFloat(current.amount);
     previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
@@ -157,7 +156,6 @@ var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).
 // console.log(sumChecker);
 
 function bumpDatHighInterest(previous, current, index, array) {
-  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
   var amount = 0;
 
   if (searchArray.includes(current.state)) {
@@ -281,8 +279,6 @@ function aggregateHigh(object) {
 var areStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).every(higherSumChecker);
 
 function selectedSums(previous, current, index, array) {
-  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
-
  if (previous.hasOwnProperty(current.state)) {
     previous[current.state] += parseFloat(current.amount);
     previous[current.state] = Math.round(previous[current.state]*100)/100;
@@ -314,8 +310,6 @@ function higherSumChecker(element) {
 var anyStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).some(higherSumChecker);
 
 function selectedSums(previous, current, index, array) {
-  var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
-
  if (previous.hasOwnProperty(current.state)) {
     previous[current.state] += parseFloat(current.amount);
     previous[current.state] = Math.round(previous[current.state]*100)/100;
