@@ -10,7 +10,7 @@ var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
 var hundredThousandairs = bankBalances.filter(getAmount);
 
 function getAmount(element) {
-  if (element.amount > 100000) return element;
+  return element.amount > 100000; // same as if (element.amount > 100000) return element
 }
 /*
   DO NOT MUTATE DATA.
@@ -29,15 +29,22 @@ function getAmount(element) {
     }
   assign the resulting new array to `datasetWithRoundedDollar`
 */
+
 var datasetWithRoundedDollar = bankBalances.map(roundedDollar);
 
 function roundedDollar(element, index, array) {
-  var dollarObj = {};
-  dollarObj.amount = element.amount;
-  dollarObj.state = element.state;
-  dollarObj.rounded = Math.round(element.amount);
+  return {    // object literal
+    amount : element.amount,
+    state : element.state,
+    rounded : Math.round(parseFloat(element.amount))
+};
 
-  return dollarObj;
+  // var dollarObj = {};
+  // dollarObj.amount = element.amount;
+  // dollarObj.state = element.state;
+  // dollarObj.rounded = Math.round(element.amount);
+
+  // return dollarObj;
 }
 
 /*
@@ -67,11 +74,17 @@ function roundedDollar(element, index, array) {
 var datasetWithRoundedDime = bankBalances.map(roundedDime);
 
 function roundedDime(element) {
-  var dimeObj = {};
-  dimeObj.amount = element.amount;
-  dimeObj.state = element.state;
-  dimeObj.roundedDime = Math.round(element.amount*10)/10;
-  return dimeObj;
+  return {
+    amount : element.amount,
+    state : element.state,
+    roundedDime : Math.round(element.amount*10)/10
+  };
+
+  // var dimeObj = {};
+  // dimeObj.amount = element.amount;
+  // dimeObj.state = element.state;
+  // dimeObj.roundedDime = Math.round(element.amount*10)/10;
+  // return dimeObj;
 }
 
 // set sumOfBankBalances to be the sum of all value held at `amount` for each bank object
@@ -124,7 +137,7 @@ function bumpDatInterest(previous, current, index, array) {
 var stateSums = bankBalances.reduce(collectStateSums, {});
 
 function collectStateSums(previous, current) {
-  if (current.state in previous) {
+  if (current.state in previous) {    // can also use (previous[current.state])
     previous[current.state] += parseFloat(current.amount);
     previous[current.state] = Math.round(previous[current.state] * 100)/ 100;
   } else {
@@ -149,11 +162,31 @@ function collectStateSums(previous, current) {
     round this number to the nearest 10th of a cent before moving on.
   )
  */
-
+// var notCrazy = bankBalances.reduce(imNotCrazy, {});
+// console.log(notCrazy);
 var sumOfHighInterests = parseFloat(bankBalances.reduce(bumpDatHighInterest, 0).toFixed(2));
-// console.log(sumOfHighInterests);
-// var sumChecker = bankBalances.reduce(stateSumChecker, 0);
-// console.log(sumChecker);
+// var sumOfHighInterests = Object.keys(stateSums)
+//   .filter(function (state) {
+//     return (searchArray.indexOf(state) > -1);
+//   })
+//   .filter(function (state) {
+//     return calculateInterest(stateSums[state]) > 50000;
+//   })
+//   .reduce(function (sum, state) {
+//     return sum += roundToTheCent(calculateInterest(stateSums[state]));
+//   });
+
+// function round(amount) {
+//   return Math.round(amount * 100) / 100;
+// }
+
+// function calculateInterest(amount) {
+//   return amount * 0.189;
+// }
+
+// function roundToTheCent(amount) {
+//   return parseFloat(round(amount).toFixed(2));
+// }
 
 function bumpDatHighInterest(previous, current, index, array) {
   var amount = 0;
@@ -163,11 +196,27 @@ function bumpDatHighInterest(previous, current, index, array) {
   } 
 
   if (amount > 50000) {
-    amount += parseFloat(current.amount);
+    // amount += parseFloat(current.amount);
     return previous+amount;
   }
   
   return previous;
+}
+
+// var sumChecker = bankBalances.reduce(stateSumChecker, 0);
+// console.log(sumChecker);
+
+// function imNotCrazy(previous, current) {
+//   var amount = 0.189 * parseFloat(current.amount);
+
+//   if (searchArray.includes(current.state) && amount > 50000 && !previous.hasOwnProperty(current.state)) {
+//     console.log(current.state);
+//     previous[current.state] = parseFloat(current.amount);
+//   }
+
+//   return previous;
+// }
+
 
 // function stateSumChecker(previous, current, index, array) {
 //   var searchArray = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
@@ -202,14 +251,14 @@ function bumpDatHighInterest(previous, current, index, array) {
   //   }
   //   return sum;
   // }
-  }
+// }
 /*
   set `lowerSumStates` to be an array of two letter state
   abbreviations of each state where the sum of amounts
   in the state is less than 1,000,000
  */
 var allStateSums = bankBalances.reduce(allSums, {});
-var lowerSumStates = agreggateLow(allStateSums);
+// var lowerSumStates = agreggateLow(allStateSums);
 
 function allSums(previous, current) {
   var amount = 0;
@@ -224,17 +273,32 @@ function allSums(previous, current) {
   return previous;
 }
 
-function agreggateLow(object) {
-  var keys = Object.keys(object);
-  var values = Object.values(object);
-  var lowSumArray = [];
+// function agreggateLow(object) {
+//   var keys = Object.keys(object);
+//   var values = Object.values(object);
+//   var lowSumArray = [];
 
-  for (var i in keys) {
-    if (values[i] < 1000000) lowSumArray.push(keys[i]);
-  }
+//   for (var i in keys) {
+//     if (values[i] < 1000000) lowSumArray.push(keys[i]);
+//   }
 
-  return lowSumArray;
-}
+//   return lowSumArray;
+// }
+var stateSumsArray = Object.keys(stateSums)
+  .map(function (state) {
+    return {
+      state : state,
+      stateSum : stateSums[state]
+    };
+  });
+
+var lowerSumStates = stateSumsArray
+  .filter(function (state) {
+    return state.stateSum < 1000000;
+  })
+  .map(function (state) {
+    return state.state;
+  });
 
 // function filterAgreggate(element, index) {
 //   if (Object.values(object)[index] < 1000000) {
@@ -246,20 +310,27 @@ function agreggateLow(object) {
   aggregate the sum of each state into one hash table
   `higherStateSums` should be the sum of all states with totals greater than 1,000,000
  */
-var higherStateSums = aggregateHigh(allStateSums);
+// var higherStateSums = aggregateHigh(allStateSums);
 
-function aggregateHigh(object) {
-  var values = Object.values(object);
-  sum = 0;
+// function aggregateHigh(object) {
+//   var values = Object.values(object);
+//   sum = 0;
 
-  for (var i in values) {
-    if (values[i] > 1000000) {
-      sum += values[i];
-    }
-  }
+//   for (var i in values) {
+//     if (values[i] > 1000000) {
+//       sum += values[i];
+//     }
+//   }
 
-  return sum;
-}
+//   return sum;
+// }
+var higherStateSums = stateSumsArray
+  .filter(function (state) {
+    return state.stateSum > 1000000;
+  })
+  .reduce(function(sum, state) {
+    return sum += state.stateSum;
+  }, 0);
 
 /*
   from each of the following states:
@@ -276,22 +347,30 @@ function aggregateHigh(object) {
   if true set `areStatesInHigherStateSum` to `true`
   otherwise set it to `false`
  */
-var areStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).every(higherSumChecker);
+// var areStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).every(higherSumChecker);
 
-function selectedSums(previous, current, index, array) {
- if (previous.hasOwnProperty(current.state)) {
-    previous[current.state] += parseFloat(current.amount);
-    previous[current.state] = Math.round(previous[current.state]*100)/100;
-  } else if (searchArray.includes(current.state)) {
-    previous[current.state] = parseFloat(current.amount);
-  }
+// function selectedSums(previous, current, index, array) {
+//  if (previous.hasOwnProperty(current.state)) {
+//     previous[current.state] += parseFloat(current.amount);
+//     previous[current.state] = Math.round(previous[current.state]*100)/100;
+//   } else if (searchArray.includes(current.state)) {
+//     previous[current.state] = parseFloat(current.amount);
+//   }
 
-  return previous;
-}
+//   return previous;
+// }
 
-function higherSumChecker(element) {
-  return (element > 2550000);
-}
+// function higherSumChecker(element) {
+//   return (element > 2550000);
+// }
+var areStatesInHigherStateSum = stateSumsArray
+  .filter(function (state) {
+    return searchArray.includes(state.state);
+  })
+  .every(function (state) {
+    return state.stateSum > 2550000;
+  });
+
 /*
   Stretch Goal && Final Boss
 
@@ -307,22 +386,30 @@ function higherSumChecker(element) {
   otherwise set it to be `false`
  */
 
-var anyStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).some(higherSumChecker);
+// var anyStatesInHigherStateSum = Object.values(bankBalances.reduce(selectedSums, {})).some(higherSumChecker);
 
-function selectedSums(previous, current, index, array) {
- if (previous.hasOwnProperty(current.state)) {
-    previous[current.state] += parseFloat(current.amount);
-    previous[current.state] = Math.round(previous[current.state]*100)/100;
-  } else if (searchArray.includes(current.state)) {
-    previous[current.state] = parseFloat(current.amount);
-  }
+// function selectedSums(previous, current, index, array) {
+//  if (previous.hasOwnProperty(current.state)) {
+//     previous[current.state] += parseFloat(current.amount);
+//     previous[current.state] = Math.round(previous[current.state]*100)/100;
+//   } else if (searchArray.includes(current.state)) {
+//     previous[current.state] = parseFloat(current.amount);
+//   }
 
-  return previous;
-}
+//   return previous;
+// }
 
-function higherSumChecker(element) {
-  return (element > 2550000);
-}
+// function higherSumChecker(element) {
+//   return (element > 2550000);
+// }
+
+var anyStatesInHigherStateSum = stateSumsArray
+  .filter(function (state) {
+    return searchArray.includes(state.state);
+  })
+  .some(function (state) {
+    return state.stateSum > 2550000;
+  });
 
 module.exports = {
   hundredThousandairs : hundredThousandairs,
